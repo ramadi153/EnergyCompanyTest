@@ -26,7 +26,6 @@ namespace EnergyCompanyExercise
             endPoints.Remove(e);
         }
         public List<EndPoint> EndPoints => endPoints;
-        [return: MaybeNull]
         public Boolean EndPointExists(string serialNumber)
         {
             var serialNumberQuery = from ep in endPoints

@@ -7,7 +7,6 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        int input;
         bool confirmExit = false;
         EnergyCompany energyCompany = new();
 
@@ -16,7 +15,7 @@ internal class Program
             PromptUserOptions();
             try
             {
-                input = Convert.ToInt32(Console.ReadLine());
+                int input = Convert.ToInt32(Console.ReadLine());
                 switch (input)
                 {
                     case 1:
@@ -109,20 +108,16 @@ internal class Program
     private static void ListEndPoints(EnergyCompany energyCompany)
     {
         var endpoints = energyCompany.EndPoints;
-        if (endpoints.Count > 0)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Listing {endpoints.Count} endpoint(s)");
-            Console.WriteLine("==========================");
-            endpoints.ForEach(x => {
-                Console.WriteLine(x);
-                Console.WriteLine();
-            });
-        }
-        else
+        if (endpoints.Count == 0)
         {
             ConsoleMessage("There are no endpoints.");
+            return;
         }
+        ConsoleMessage($"Listing {endpoints.Count} endpoint(s)");
+        endpoints.ForEach(x => {
+            Console.WriteLine(x);
+            Console.WriteLine();
+        });
     }
     private static void InsertEndPoint(EnergyCompany energyCompany)
     {
@@ -133,18 +128,16 @@ internal class Program
             return;
         }
         Boolean endPointExists = energyCompany.EndPointExists(serialNumber);
-        if (!endPointExists)
-        {
-            EndPoint? endPoint = ReadEndPointInfo(serialNumber);
-            if (endPoint is not null)
-            {
-                energyCompany.AddEndPoint(endPoint);
-                ConsoleMessage($"EndPoint \"{serialNumber}\" successfully added.");
-            }
-        }
-        else
+        if (endPointExists)
         {
             ConsoleMessage($"EndPoint \"{serialNumber}\" already exists.");
+            return;
+        }
+        EndPoint? endPoint = ReadEndPointInfo(serialNumber);
+        if (endPoint is not null)
+        {
+            energyCompany.AddEndPoint(endPoint);
+            ConsoleMessage($"EndPoint \"{serialNumber}\" successfully added.");
         }
     }
     private static void EditEndPoint(EnergyCompany energyCompany)
@@ -156,22 +149,20 @@ internal class Program
             return;
         }
         Boolean endPointExists = energyCompany.EndPointExists(serialNumber);
-        if (endPointExists)
-        {
-            EndPoint endPoint = energyCompany.GetEndPoint(serialNumber);
-            int nextState = ReadState();
-            if (nextState == -1)
-            {
-                ConsoleMessage("Invalid state.");
-                return;
-            }
-            endPoint.State = nextState;
-            ConsoleMessage($"EndPoint \"{serialNumber}\" successfully edited.");
-        }
-        else
+        if (!endPointExists)
         {
             ConsoleMessage($"EndPoint \"{serialNumber}\" not found.");
+            return;
         }
+        EndPoint endPoint = energyCompany.GetEndPoint(serialNumber);
+        int nextState = ReadState();
+        if (nextState == -1)
+        {
+            ConsoleMessage("Invalid state.");
+            return;
+        }
+        endPoint.State = nextState;
+        ConsoleMessage($"EndPoint \"{serialNumber}\" successfully edited.");
     }
     private static void DeleteEndPoint(EnergyCompany energyCompany)
     {
@@ -182,19 +173,17 @@ internal class Program
             return;
         }
         Boolean endPointExists = energyCompany.EndPointExists(serialNumber);
-        if (endPointExists)
-        {
-            Console.Write($"Are you sure you want delete the endpoint \"{serialNumber}\"? (Y/N): ");
-            var confirmDelete = Console.ReadLine();
-            if (String.Equals(confirmDelete, "Y", StringComparison.OrdinalIgnoreCase))
-            {
-                energyCompany.DeleteEndPoint(serialNumber);
-                ConsoleMessage($"EndPoint \"{serialNumber}\" successfully deleted.");
-            }
-        }
-        else
+        if (!endPointExists)
         {
             ConsoleMessage($"EndPoint \"{serialNumber}\" not found.");
+            return;
+        }
+        Console.Write($"Are you sure you want delete the endpoint \"{serialNumber}\"? (Y/N): ");
+        var confirmDelete = Console.ReadLine();
+        if (String.Equals(confirmDelete, "Y", StringComparison.OrdinalIgnoreCase))
+        {
+            energyCompany.DeleteEndPoint(serialNumber);
+            ConsoleMessage($"EndPoint \"{serialNumber}\" successfully deleted.");
         }
     }
     private static void FindEndPoint(EnergyCompany energyCompany)
@@ -206,15 +195,13 @@ internal class Program
             return;
         }
         Boolean endPointExists = energyCompany.EndPointExists(serialNumber);
-        if (endPointExists)
-        {
-            EndPoint endPoint = energyCompany.GetEndPoint(serialNumber);
-            ConsoleMessage(endPoint.ToString());
-        }
-        else
+        if (!endPointExists)
         {
             ConsoleMessage($"EndPoint \"{serialNumber}\" not found.");
+            return;
         }
+        EndPoint endPoint = energyCompany.GetEndPoint(serialNumber);
+        ConsoleMessage(endPoint.ToString());
     }
     private static void ConsoleMessage(string message)
     {
