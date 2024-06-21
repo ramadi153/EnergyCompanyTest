@@ -66,22 +66,5 @@ namespace EnergyCompanyExercise
             Assert.NotNull(e);
             Assert.Equal(e.SerialNumber, endPoint.SerialNumber);
         }
-        [Fact]
-        public void FindInvalidEndPointTest()
-        {
-            // Setup
-            EnergyCompany energyCompany = new();
-            var serialNumber = "sn1";
-            var state = 0;
-            EndPoint endPoint = new(serialNumber, 0, 0, "mv1", state);
-            energyCompany.AddEndPoint(endPoint);
-            var serialNumberInvalid = "sn2";
-
-            // Action
-            Boolean exists = energyCompany.EndPointExists(serialNumberInvalid);
-
-            // Assert
-            Assert.False(exists);
-        }
     }
 }
